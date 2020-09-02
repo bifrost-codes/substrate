@@ -999,13 +999,13 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 					header has already been verified; qed");
 
 		// make sure that slot number is strictly increasing
-		if slot_number <= parent_slot {
-			return Err(
-				ConsensusError::ClientImport(babe_err(
-					Error::<Block>::SlotNumberMustIncrease(parent_slot, slot_number)
-				).into())
-			);
-		}
+//		if slot_number <= parent_slot {
+//			return Err(
+//				ConsensusError::ClientImport(babe_err(
+//					Error::<Block>::SlotNumberMustIncrease(parent_slot, slot_number)
+//				).into())
+//			);
+//		}
 
 		let mut epoch_changes = self.epoch_changes.lock();
 
