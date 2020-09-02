@@ -1008,7 +1008,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 //		}
 		println!("slot number: {:?}", slot_number);
 		println!("parent slot number: {:?}", parent_slot);
-		let slot_number = parent_slot + 1;
+		let slot_number = parent_slot;
 		println!("change slot number to: {:?}", slot_number);
 
 		let mut epoch_changes = self.epoch_changes.lock();
