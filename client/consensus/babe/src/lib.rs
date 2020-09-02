@@ -1053,24 +1053,24 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			(true, true, _) => {},
 			(false, false, false) => {},
 			(false, false, true) => {
+				println!("defined on line: {}", line!());
 				return Err(
-					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::UnexpectedConfigChange).into(),
 					)
 				)
 			},
 			(true, false, _) => {
+				println!("defined on line: {}", line!());
 				return Err(
-					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::ExpectedEpochChange(hash, slot_number)).into(),
 					)
 				)
 			},
 			(false, true, _) => {
+				println!("defined on line: {}", line!());
 				return Err(
-					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::UnexpectedEpochChange).into(),
 					)
