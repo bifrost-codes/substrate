@@ -1028,6 +1028,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 						babe_err(Error::<Block>::ParentBlockNoAssociatedWeight(hash)).into()
 					))?
 			};
+			println!("defined on line: {}", line!());
 
 			let intermediate = block.take_intermediate::<BabeIntermediate<Block>>(
 				INTERMEDIATE_KEY
@@ -1043,14 +1044,17 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 		// search for this all the time so we can reject unexpected announcements.
 		let next_epoch_digest = find_next_epoch_digest::<Block>(&block.header)
 			.map_err(|e| ConsensusError::ClientImport(e.to_string()))?;
+		println!("defined on line: {}", line!());
 		let next_config_digest = find_next_config_digest::<Block>(&block.header)
 			.map_err(|e| ConsensusError::ClientImport(e.to_string()))?;
+		println!("defined on line: {}", line!());
 
 		match (first_in_epoch, next_epoch_digest.is_some(), next_config_digest.is_some()) {
 			(true, true, _) => {},
 			(false, false, false) => {},
 			(false, false, true) => {
 				return Err(
+					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::UnexpectedConfigChange).into(),
 					)
@@ -1058,6 +1062,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			},
 			(true, false, _) => {
 				return Err(
+					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::ExpectedEpochChange(hash, slot_number)).into(),
 					)
@@ -1065,6 +1070,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			},
 			(false, true, _) => {
 				return Err(
+					println!("defined on line: {}", line!());
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::UnexpectedEpochChange).into(),
 					)
@@ -1087,6 +1093,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			).ok_or_else(|| {
 				ConsensusError::ClientImport(Error::<Block>::FetchEpoch(parent_hash).into())
 			})?;
+			println!("defined on line: {}", line!());
 
 			let epoch_config = next_config_digest.map(Into::into).unwrap_or_else(
 				|| viable_epoch.as_ref().config.clone()
@@ -1136,6 +1143,7 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 					*block.header.parent_hash(),
 					next_epoch,
 				).map_err(|e| ConsensusError::ClientImport(format!("{:?}", e)))?;
+				println!("defined on line: {}", line!());
 
 				Ok(())
 			};
@@ -1225,6 +1233,7 @@ fn prune_finalized<Block, Client>(
 			.map_err(|e| ConsensusError::ClientImport(format!("{:?}", e)))?
 			.expect("best finalized hash was given by client; \
 				 finalized headers must exist in db; qed");
+		println!("defined on line: {}", line!());
 
 		find_pre_digest::<Block>(&finalized_header)
 			.expect("finalized header must be valid; \
