@@ -1053,7 +1053,6 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			(true, true, _) => {},
 			(false, false, false) => {},
 			(false, false, true) => {
-				println!("defined on line: {}", line!());
 				return Err(
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::UnexpectedConfigChange).into(),
@@ -1061,7 +1060,6 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 				)
 			},
 			(true, false, _) => {
-				println!("defined on line: {}", line!());
 				return Err(
 					ConsensusError::ClientImport(
 						babe_err(Error::<Block>::ExpectedEpochChange(hash, slot_number)).into(),
@@ -1248,6 +1246,7 @@ fn prune_finalized<Block, Client>(
 		info.finalized_number,
 		finalized_slot,
 	).map_err(|e| ConsensusError::ClientImport(format!("{:?}", e)))?;
+	println!("defined on line: {}", line!());
 
 	Ok(())
 }
