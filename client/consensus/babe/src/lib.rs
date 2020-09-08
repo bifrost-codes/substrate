@@ -158,7 +158,8 @@ impl EpochT for Epoch {
 	) -> Epoch {
 		Epoch {
 			epoch_index: self.epoch_index + 1,
-			start_slot: self.start_slot + self.duration,
+//			start_slot: self.start_slot + self.duration,
+			start_slot: self.start_slot + 300 * 48 * 5 * 2, // catch the epoch by 10 days each round
 			duration: self.duration,
 			authorities: descriptor.authorities,
 			randomness: descriptor.randomness,
@@ -999,17 +1000,13 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 					header has already been verified; qed");
 
 		// make sure that slot number is strictly increasing
-//		if slot_number <= parent_slot {
-//			return Err(
-//				ConsensusError::ClientImport(babe_err(
-//					Error::<Block>::SlotNumberMustIncrease(parent_slot, slot_number)
-//				).into())
-//			);
-//		}
-		println!("slot number: {:?}", slot_number);
-		println!("parent slot number: {:?}", parent_slot);
-//		let slot_number = parent_slot;
-//		println!("change slot number to: {:?}", slot_number);
+		if slot_number <= parent_slot {
+			return Err(
+				ConsensusError::ClientImport(babe_err(
+					Error::<Block>::SlotNumberMustIncrease(parent_slot, slot_number)
+				).into())
+			);
+		}
 
 		let mut epoch_changes = self.epoch_changes.lock();
 
@@ -1028,7 +1025,6 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 						babe_err(Error::<Block>::ParentBlockNoAssociatedWeight(hash)).into()
 					))?
 			};
-			println!("defined on line: {}", line!());
 
 			let intermediate = block.take_intermediate::<BabeIntermediate<Block>>(
 				INTERMEDIATE_KEY
@@ -1044,10 +1040,8 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 		// search for this all the time so we can reject unexpected announcements.
 		let next_epoch_digest = find_next_epoch_digest::<Block>(&block.header)
 			.map_err(|e| ConsensusError::ClientImport(e.to_string()))?;
-		println!("defined on line: {}", line!());
 		let next_config_digest = find_next_config_digest::<Block>(&block.header)
 			.map_err(|e| ConsensusError::ClientImport(e.to_string()))?;
-		println!("defined on line: {}", line!());
 
 		match (first_in_epoch, next_epoch_digest.is_some(), next_config_digest.is_some()) {
 			(true, true, _) => {},
@@ -1067,13 +1061,11 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 				)
 			},
 			(false, true, _) => {
-				println!("defined on line: {}", line!());
-				();
-//				return Err(
-//					ConsensusError::ClientImport(
-//						babe_err(Error::<Block>::UnexpectedEpochChange).into(),
-//					)
-//				)
+				return Err(
+					ConsensusError::ClientImport(
+						babe_err(Error::<Block>::UnexpectedEpochChange).into(),
+					)
+				)
 			},
 		}
 
@@ -1092,7 +1084,6 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 			).ok_or_else(|| {
 				ConsensusError::ClientImport(Error::<Block>::FetchEpoch(parent_hash).into())
 			})?;
-			println!("defined on line: {}", line!());
 
 			let epoch_config = next_config_digest.map(Into::into).unwrap_or_else(
 				|| viable_epoch.as_ref().config.clone()
@@ -1142,7 +1133,6 @@ impl<Block, Client, Inner> BlockImport<Block> for BabeBlockImport<Block, Client,
 					*block.header.parent_hash(),
 					next_epoch,
 				).map_err(|e| ConsensusError::ClientImport(format!("{:?}", e)))?;
-				println!("defined on line: {}", line!());
 
 				Ok(())
 			};
