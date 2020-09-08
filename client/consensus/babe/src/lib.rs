@@ -159,7 +159,7 @@ impl EpochT for Epoch {
 		Epoch {
 			epoch_index: self.epoch_index + 1,
 			start_slot: self.start_slot + self.duration,
-//			start_slot: self.start_slot + 300 * 48 * 5 * 2, // catch the epoch by 10 days each round
+//			start_slot: self.start_slot + 300 * 48 * 5 * 2, // catch up the latest epoch by 10 days each round
 			duration: self.duration,
 			authorities: descriptor.authorities,
 			randomness: descriptor.randomness,
